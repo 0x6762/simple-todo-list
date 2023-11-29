@@ -1,0 +1,30 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* COLORS */
+:root {
+  --bg-color: var(--black);
+  --surface-color: var(--gray150);
+  --type-color: #999999;
+  --accent-color: #663ae4;
+
+  --black: #000000;
+  --gray100: #111111;
+  --gray150: #151515;
+  --gray200: #222222;
+  --gray500: #555555;
+  --gray600: #666666;
+
+  --white: #ffffff;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
