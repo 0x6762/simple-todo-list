@@ -1,85 +1,49 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+  <!-- LIST COMPONENT -->
+  <section class="wrap-list">
+    <ul class="list-data">
+      <li class="list-item">
+        <input type="checkbox" />
+        <p class="content">This is an item</p>
+      </li>
+    </ul>
+  </section>
+  <section class="wrap-add-task">
+    <div class="wrap-input">
+      <p class="label">New task</p>
+      <input type="text" placeholder="What do you want to add?" />
     </div>
-  </header>
-
-  <RouterView />
+    <div class="action-btn">+</div>
+  </section>
+  <!-- LIST COMPONENT -->
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<style lang="scss">
+/* LIST COMPONENT */
+.wrap-list {
+  height: 80vh;
+  padding: 24px;
+  margin: 8px;
+  background-color: var(--surface-color);
+  border-radius: 8px;
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
+  .list-item {
     display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
   }
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+/* ADD TASK COMPONENT */
+.wrap-input {
+  position: sticky;
+  bottom: 8px;
+  padding: 8px;
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .action-btn {
+    background-color: --surface-color;
   }
 }
 </style>
