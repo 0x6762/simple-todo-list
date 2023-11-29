@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { ref } from 'vue'
+import TaskList from './components/TaskList.vue'
 </script>
 
 <template>
   <h1 class="list-name">My tasks</h1>
-  <!-- LIST COMPONENT -->
-  <section class="wrap-list">
-    <ul class="list-data">
-      <li class="list-item">
-        <input type="checkbox" />
-        <p class="content">This is an item</p>
-      </li>
-    </ul>
-  </section>
+
+  <TaskList></TaskList>
+
   <section class="wrap-add-task">
     <div class="wrap-content">
       <div class="wrap-input">
@@ -27,7 +22,6 @@ import { RouterLink, RouterView } from 'vue-router'
       </div>
     </div>
   </section>
-  <!-- LIST COMPONENT -->
 </template>
 
 <style lang="scss" scoped>
@@ -36,23 +30,6 @@ h1 {
   font-size: 18px;
   font-weight: 600;
   color: var(--white);
-}
-/* LIST COMPONENT */
-.wrap-list {
-  height: 70vh;
-  padding: 24px;
-  margin: 8px;
-  background-color: var(--surface-color);
-  border-radius: 8px;
-
-  .list-item {
-    display: flex;
-    gap: 16px;
-
-    p {
-      font-size: 16px;
-    }
-  }
 }
 
 /* ADD TASK COMPONENT */
