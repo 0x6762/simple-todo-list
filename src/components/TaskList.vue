@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import TaskItem from './TaskItem.vue'
 defineProps(['title'])
-defineEmits(['addTask'])
 
 const tasks = ref([
   { id: 1, title: 'Learn to write in local storage' },
@@ -20,7 +19,6 @@ const addTask = () => {
     <ul class="list-data">
       <TaskItem v-for="item in tasks" :key="item.id" :title="item.title"> </TaskItem>
     </ul>
-    <button @click="addTask">Add</button>
   </section>
 </template>
 
