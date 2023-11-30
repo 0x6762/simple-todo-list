@@ -5,9 +5,9 @@ import TaskItem from './components/TaskItem.vue'
 defineProps(['title'])
 
 const tasks = ref([
-  { id: 1, title: 'Learn to write in local storage' },
-  { id: 2, title: 'Check pinia' },
-  { id: 3, title: 'Fix localhost for external access' }
+  // { id: 1, title: 'Learn to write in local storage' },
+  // { id: 2, title: 'Check pinia' },
+  // { id: 3, title: 'Fix localhost for external access' }
 ])
 
 const addTask = () => {
@@ -26,6 +26,9 @@ const newItem = ref('')
     <ul class="list-data">
       <TaskItem v-for="item in tasks" :key="item.id" :title="item.title"> </TaskItem>
     </ul>
+    <div class="list-empty-state" v-if="!tasks.length">
+      <p>Nothing here yet</p>
+    </div>
   </section>
   <!-- END TASK LIST -->
 
@@ -62,6 +65,14 @@ h1 {
   margin: 8px;
   background-color: var(--surface-color);
   border-radius: 8px;
+
+  .list-empty-state {
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray500);
+  }
 }
 /* END TASK LIST */
 
