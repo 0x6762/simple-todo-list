@@ -46,6 +46,34 @@ defineEmits(['removeTask'])
     align-items: baseline;
     gap: 16px;
 
+    input[type='checkbox'] {
+      appearance: none;
+      font: inherit;
+      color: currentColor;
+      min-width: 16px;
+      width: 16px;
+      height: 16px;
+      border: 0.15em solid currentColor;
+      border-radius: 0.15em;
+      cursor: pointer;
+
+      display: grid;
+      place-content: center;
+    }
+
+    input[type='checkbox']::before {
+      content: '';
+      width: 0.5em;
+      height: 0.5em;
+      transform: scale(0);
+      transition: 100ms transform ease-in-out;
+      box-shadow: inset 1em 1em var(--white);
+    }
+
+    input[type='checkbox']:checked::before {
+      transform: scale(1);
+    }
+
     p {
       font-size: 16px;
     }
