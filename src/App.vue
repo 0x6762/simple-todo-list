@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
+import { type } from 'os'
 
 defineProps(['title'])
 
@@ -8,14 +9,29 @@ const STORAGE_KEY = 'todo-app-storage'
 onMounted(() => {
   tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
 })
-const tasks = ref([
-  // { id: 1, title: 'Learn to write in local storage' },
-])
 
+// Sets type to item
+type item = {
+  id: number
+  title: string
+}
+
+// Sets an empty array to receive data
+const tasks = ref<item[]>([])
+
+// Sets an empty string to receive input value
 const newItem = ref('')
+
+// Add task to list
 const addTask = () => {
   tasks.value.push({ id: tasks.value.length + 1, title: newItem.value })
   newItem.value = ''
+  // Add task to local storage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
+}
+// Remove task from list
+const removeTask = (item) => {
+  tasks.value.splice(tasks.value.indexOf(item), 1)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
 }
 </script>
@@ -26,11 +42,18 @@ const addTask = () => {
   <!-- TASK LIST -->
   <section class="wrap-list">
     <ul class="list-data">
-      <TaskItem v-for="item in tasks" :key="item.id" :title="item.title"> </TaskItem>
+      <TaskItem
+        v-for="item in tasks"
+        :key="item.id"
+        :title="item.title"
+        @remove-task="removeTask(item)"
+      >
+      </TaskItem>
     </ul>
     <div class="list-empty-state" v-if="!tasks.length">
       <p>Nothing here yet</p>
     </div>
+    <!-- <button @click="removeTask">remove</button> -->
   </section>
   <!-- END TASK LIST -->
 

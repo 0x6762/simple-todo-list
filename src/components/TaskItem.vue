@@ -1,11 +1,13 @@
 <script setup lang="ts">
 defineProps(['title'])
+defineEmits(['removeTask'])
 </script>
 
 <template>
   <li class="list-item">
     <input type="checkbox" />
     <p class="content">{{ title }}</p>
+    <button @click="$emit('removeTask')" class="remove-item">X</button>
   </li>
 </template>
 
@@ -20,6 +22,10 @@ defineProps(['title'])
 
   p {
     font-size: 16px;
+  }
+
+  button {
+    cursor: pointer;
   }
 }
 </style>
