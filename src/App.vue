@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
-import { type } from 'os'
 
 defineProps(['title'])
 
