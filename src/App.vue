@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
 
 defineProps(['title'])
 
+const STORAGE_KEY = 'todo-app-storage'
+onMounted(() => {
+  tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+})
 const tasks = ref([
   // { id: 1, title: 'Learn to write in local storage' },
-  // { id: 2, title: 'Check pinia' },
-  // { id: 3, title: 'Fix localhost for external access' }
 ])
 
+const newItem = ref('')
 const addTask = () => {
   tasks.value.push({ id: tasks.value.length + 1, title: newItem.value })
   newItem.value = ''
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
 }
-
-const newItem = ref('')
 </script>
 
 <template>
