@@ -1,33 +1,53 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { ref } from 'vue'
+import TaskItem from './components/TaskItem.vue'
+
+defineProps(['title'])
+
+const tasks = ref([
+  // { id: 1, title: 'Learn to write in local storage' },
+  // { id: 2, title: 'Check pinia' },
+  // { id: 3, title: 'Fix localhost for external access' }
+])
+
+const addTask = () => {
+  tasks.value.push({ id: tasks.value.length + 1, title: newItem.value })
+  newItem.value = ''
+}
+
+const newItem = ref('')
 </script>
 
 <template>
   <h1 class="list-name">My tasks</h1>
-  <!-- LIST COMPONENT -->
+
+  <!-- TASK LIST -->
   <section class="wrap-list">
     <ul class="list-data">
-      <li class="list-item">
-        <input type="checkbox" />
-        <p class="content">This is an item</p>
-      </li>
+      <TaskItem v-for="item in tasks" :key="item.id" :title="item.title"> </TaskItem>
     </ul>
+    <div class="list-empty-state" v-if="!tasks.length">
+      <p>Nothing here yet</p>
+    </div>
   </section>
+  <!-- END TASK LIST -->
+
+  <!-- ADD TASK INPUT -->
   <section class="wrap-add-task">
-    <div class="wrap-content">
+    <form class="wrap-content" @submit.prevent="addTask">
       <div class="wrap-input">
         <p class="label">New task</p>
-        <input type="text" placeholder="What do you want to add?" />
+        <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
       </div>
-      <div class="action-btn">
+      <button class="action-btn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
           <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
         </svg>
-      </div>
-    </div>
+      </button>
+    </form>
   </section>
-  <!-- LIST COMPONENT -->
+  <!-- END ADD TASK INPUT -->
 </template>
 
 <style lang="scss" scoped>
@@ -37,26 +57,26 @@ h1 {
   font-weight: 600;
   color: var(--white);
 }
-/* LIST COMPONENT */
+
+/* TASK LIST */
 .wrap-list {
   height: 70vh;
-  padding: 24px;
+  padding: 8px;
   margin: 8px;
   background-color: var(--surface-color);
   border-radius: 8px;
 
-  .list-item {
+  .list-empty-state {
+    height: 30%;
     display: flex;
-    gap: 16px;
-
-    p {
-      font-size: 16px;
-    }
+    align-items: center;
+    justify-content: center;
+    color: var(--gray500);
   }
 }
+/* END TASK LIST */
 
-/* ADD TASK COMPONENT */
-
+/* ADD TASK INPUT */
 .wrap-add-task {
   position: fixed;
   bottom: 8px;
@@ -93,7 +113,6 @@ h1 {
     }
   }
 }
-
 .action-btn {
   display: flex;
   align-items: center;
@@ -109,4 +128,5 @@ h1 {
     stroke: var(--accent-color);
   }
 }
+/* END ADD TASK INPUT */
 </style>
