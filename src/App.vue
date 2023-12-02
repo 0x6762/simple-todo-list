@@ -36,42 +36,46 @@ const removeTask = (item) => {
 </script>
 
 <template>
-  <h1 class="list-name">My tasks</h1>
+  <div class="main">
+    <header>
+      <h1 class="list-name">My tasks</h1>
+    </header>
 
-  <!-- TASK LIST -->
-  <section class="wrap-list">
-    <ul class="list-data">
-      <TaskItem
-        v-for="item in tasks"
-        :key="item.id"
-        :title="item.title"
-        @remove-task="removeTask(item)"
-      >
-      </TaskItem>
-    </ul>
-    <div class="list-empty-state" v-if="!tasks.length">
-      <p>Nothing here yet</p>
-    </div>
-    <!-- <button @click="removeTask">remove</button> -->
-  </section>
-  <!-- END TASK LIST -->
-
-  <!-- ADD TASK INPUT -->
-  <section class="wrap-add-task">
-    <form class="wrap-content" @submit.prevent="addTask">
-      <div class="wrap-input">
-        <p class="label">New task</p>
-        <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
+    <!-- TASK LIST -->
+    <section class="wrap-list">
+      <ul class="list-data">
+        <TaskItem
+          v-for="item in tasks"
+          :key="item.id"
+          :title="item.title"
+          @remove-task="removeTask(item)"
+        >
+        </TaskItem>
+      </ul>
+      <div class="list-empty-state" v-if="!tasks.length">
+        <p>Nothing here yet</p>
       </div>
-      <button class="action-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-          <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </button>
-    </form>
-  </section>
-  <!-- END ADD TASK INPUT -->
+      <!-- <button @click="removeTask">remove</button> -->
+    </section>
+    <!-- END TASK LIST -->
+
+    <!-- ADD TASK INPUT -->
+    <section class="wrap-add-task">
+      <form class="wrap-content" @submit.prevent="addTask">
+        <div class="wrap-input">
+          <p class="label">New task</p>
+          <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
+        </div>
+        <button class="action-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
+            <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </form>
+    </section>
+    <!-- END ADD TASK INPUT -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -84,6 +88,8 @@ h1 {
 
 /* TASK LIST */
 .wrap-list {
+  max-width: 800px;
+  width: 100%;
   height: 70vh;
   padding: 8px;
   margin: 8px;
@@ -103,9 +109,9 @@ h1 {
 /* ADD TASK INPUT */
 .wrap-add-task {
   position: fixed;
+  max-width: 800px;
+  width: 100%;
   bottom: 8px;
-  left: 0;
-  right: 0;
 
   .wrap-content {
     display: flex;
@@ -115,6 +121,7 @@ h1 {
   }
 }
 .wrap-input {
+  width: 90%;
   .label {
     margin-bottom: 8px;
     font-size: 14px;
