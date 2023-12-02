@@ -1,53 +1,81 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
 
 defineProps(['title'])
 
-const tasks = ref([
-  // { id: 1, title: 'Learn to write in local storage' },
-  // { id: 2, title: 'Check pinia' },
-  // { id: 3, title: 'Fix localhost for external access' }
-])
+const STORAGE_KEY = 'todo-app-storage'
+onMounted(() => {
+  tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+})
 
+// Sets type to item
+type item = {
+  id: number
+  title: string
+}
+
+// Sets an empty array to receive data
+const tasks = ref<item[]>([])
+
+// Sets an empty string to receive input value
+const newItem = ref('')
+
+// Add task to list
 const addTask = () => {
   tasks.value.push({ id: tasks.value.length + 1, title: newItem.value })
   newItem.value = ''
+  // Add task to local storage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
 }
-
-const newItem = ref('')
+// Remove task from list
+const removeTask = (item) => {
+  tasks.value.splice(tasks.value.indexOf(item), 1)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
+}
 </script>
 
 <template>
-  <h1 class="list-name">My tasks</h1>
+  <div class="main">
+    <header>
+      <h1 class="list-name">My tasks</h1>
+    </header>
 
-  <!-- TASK LIST -->
-  <section class="wrap-list">
-    <ul class="list-data">
-      <TaskItem v-for="item in tasks" :key="item.id" :title="item.title"> </TaskItem>
-    </ul>
-    <div class="list-empty-state" v-if="!tasks.length">
-      <p>Nothing here yet</p>
-    </div>
-  </section>
-  <!-- END TASK LIST -->
-
-  <!-- ADD TASK INPUT -->
-  <section class="wrap-add-task">
-    <form class="wrap-content" @submit.prevent="addTask">
-      <div class="wrap-input">
-        <p class="label">New task</p>
-        <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
+    <!-- TASK LIST -->
+    <section class="wrap-list">
+      <ul class="list-data">
+        <TaskItem
+          v-for="item in tasks"
+          :key="item.id"
+          :title="item.title"
+          @remove-task="removeTask(item)"
+        >
+        </TaskItem>
+      </ul>
+      <div class="list-empty-state" v-if="!tasks.length">
+        <p>Nothing here yet</p>
       </div>
-      <button class="action-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-          <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-        </svg>
-      </button>
-    </form>
-  </section>
-  <!-- END ADD TASK INPUT -->
+      <!-- <button @click="removeTask">remove</button> -->
+    </section>
+    <!-- END TASK LIST -->
+
+    <!-- ADD TASK INPUT -->
+    <section class="wrap-add-task">
+      <form class="wrap-content" @submit.prevent="addTask">
+        <div class="wrap-input">
+          <p class="label">New task</p>
+          <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
+        </div>
+        <button class="action-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
+            <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </form>
+    </section>
+    <!-- END ADD TASK INPUT -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -78,10 +106,9 @@ h1 {
 
 /* ADD TASK INPUT */
 .wrap-add-task {
+  width: 100%;
   position: fixed;
   bottom: 8px;
-  left: 0;
-  right: 0;
 
   .wrap-content {
     display: flex;
@@ -96,7 +123,6 @@ h1 {
     font-size: 14px;
   }
   input {
-    width: 100%;
     background-color: var(--bg-color);
     color: var(--accent-color);
     font-size: 18px;
