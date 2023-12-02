@@ -88,8 +88,6 @@ h1 {
 
 /* TASK LIST */
 .wrap-list {
-  max-width: 800px;
-  width: 100%;
   height: 70vh;
   padding: 8px;
   margin: 8px;
@@ -108,9 +106,8 @@ h1 {
 
 /* ADD TASK INPUT */
 .wrap-add-task {
-  position: fixed;
-  max-width: 800px;
   width: 100%;
+  position: fixed;
   bottom: 8px;
 
   .wrap-content {
@@ -121,13 +118,11 @@ h1 {
   }
 }
 .wrap-input {
-  width: 90%;
   .label {
     margin-bottom: 8px;
     font-size: 14px;
   }
   input {
-    width: 100%;
     background-color: var(--bg-color);
     color: var(--accent-color);
     font-size: 18px;
