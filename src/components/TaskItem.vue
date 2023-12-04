@@ -41,6 +41,10 @@ defineEmits(['removeTask'])
   padding: 16px;
   border-radius: 6px;
 
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   .wrap-content {
     display: flex;
     align-items: baseline;
@@ -53,7 +57,7 @@ defineEmits(['removeTask'])
       min-width: 16px;
       width: 16px;
       height: 16px;
-      border: 0.15em solid currentColor;
+      border: 0.15em solid var(--gray500);
       border-radius: 0.15em;
       cursor: pointer;
 
@@ -85,6 +89,12 @@ defineEmits(['removeTask'])
 
     svg {
       stroke: var(--gray500);
+    }
+
+    &:hover {
+      svg {
+        stroke: var(--white);
+      }
     }
   }
 }

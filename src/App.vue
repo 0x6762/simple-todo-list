@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import TaskItem from './components/TaskItem.vue'
 
 defineProps(['title'])
@@ -43,7 +43,7 @@ const removeTask = (item) => {
 
     <!-- TASK LIST -->
     <section class="wrap-list">
-      <ul class="list-data">
+      <ul class="list-data" v-if="tasks.length != 0">
         <TaskItem
           v-for="item in tasks"
           :key="item.id"
@@ -52,29 +52,43 @@ const removeTask = (item) => {
         >
         </TaskItem>
       </ul>
-      <div class="list-empty-state" v-if="!tasks.length">
+      <!-- <div class="list-empty-state" v-if="!tasks.length">
         <p>Nothing here yet</p>
-      </div>
-      <!-- <button @click="removeTask">remove</button> -->
+      </div> -->
+
+      <!-- ADD TASK INPUT -->
+      <section class="wrap-add-task">
+        <form class="wrap-content" @submit.prevent="addTask">
+          <div class="wrap-input">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12H19"
+                stroke="inherit"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 5L19 12L12 19"
+                stroke="inherit"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <input v-model.trim="newItem" type="text" placeholder="Add a new task" />
+          </div>
+        </form>
+      </section>
+      <!-- END ADD TASK INPUT -->
     </section>
     <!-- END TASK LIST -->
-
-    <!-- ADD TASK INPUT -->
-    <section class="wrap-add-task">
-      <form class="wrap-content" @submit.prevent="addTask">
-        <div class="wrap-input">
-          <p class="label">New task</p>
-          <input v-model.trim="newItem" type="text" placeholder="What do you want to add?" />
-        </div>
-        <button class="action-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M12 5V19" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-            <path d="M5 12L19 12" stroke="inherit" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </button>
-      </form>
-    </section>
-    <!-- END ADD TASK INPUT -->
   </div>
 </template>
 
@@ -88,11 +102,17 @@ h1 {
 
 /* TASK LIST */
 .wrap-list {
-  height: 70vh;
+  display: flex;
+  flex-direction: column-reverse;
+  position: relative;
   padding: 8px;
   margin: 8px;
   background-color: var(--surface-color);
   border-radius: 8px;
+
+  .list-data {
+    margin-top: 8px;
+  }
 
   .list-empty-state {
     height: 30%;
@@ -106,35 +126,38 @@ h1 {
 
 /* ADD TASK INPUT */
 .wrap-add-task {
-  width: 100%;
-  position: fixed;
-  bottom: 8px;
-
   .wrap-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 24px;
+    padding: 0 8px;
   }
 }
 .wrap-input {
-  .label {
-    margin-bottom: 8px;
-    font-size: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  svg {
+    stroke: var(--accent-color);
   }
+
   input {
-    background-color: var(--bg-color);
-    color: var(--accent-color);
+    background-color: var(--surface-color);
+    padding: 12px 16px;
+    color: var(--white);
     font-size: 18px;
     font-weight: 400;
     border: none;
+    border-radius: 8px;
     outline: none;
     &::placeholder {
-      color: var(--gray500);
+      color: var(--gray600);
     }
     &:focus {
       &::placeholder {
-        color: var(--bg-color);
+        color: transparent;
       }
     }
   }
