@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
 
 defineProps(['title'])
@@ -10,27 +10,26 @@ onMounted(() => {
 })
 
 // Sets type to item
-type item = {
+type task = {
   id: number
   title: string
 }
 
-// Sets an empty array to receive data
-const tasks = ref<item[]>([])
-
+// Sets an empty array to receive task list
+const tasks = ref<task[]>([])
 // Sets an empty string to receive input value
-const newItem = ref('')
+const taskText = ref('')
 
 // Add task to list
 const addTask = () => {
-  tasks.value.push({ id: tasks.value.length + 1, title: newItem.value })
-  newItem.value = ''
+  tasks.value.push({ id: tasks.value.length + 1, title: taskText.value })
+  taskText.value = ''
   // Add task to local storage
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
 }
 // Remove task from list
-const removeTask = (item) => {
-  tasks.value.splice(tasks.value.indexOf(item), 1)
+const removeTask = (task) => {
+  tasks.value.splice(tasks.value.indexOf(task), 1)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
 }
 </script>
@@ -45,10 +44,10 @@ const removeTask = (item) => {
     <section class="wrap-list">
       <ul class="list-data" v-if="tasks.length != 0">
         <TaskItem
-          v-for="item in tasks"
-          :key="item.id"
-          :title="item.title"
-          @remove-task="removeTask(item)"
+          v-for="task in tasks"
+          :key="task.id"
+          :title="task.title"
+          @remove-task="removeTask(task)"
         >
         </TaskItem>
       </ul>
@@ -82,7 +81,7 @@ const removeTask = (item) => {
                 stroke-linejoin="round"
               />
             </svg>
-            <input v-model.trim="newItem" type="text" placeholder="Add a new task" />
+            <input v-model.trim="taskText" type="text" placeholder="Add a new task" />
           </div>
         </form>
       </section>
