@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import TaskItem from './components/TaskItem.vue'
 
+import ArrowIcon from './components/icons/ic_arrow.svg'
+
 defineProps(['title'])
 
 const STORAGE_KEY = 'todo-app-storage'
@@ -59,28 +61,7 @@ const removeTask = (task) => {
       <section class="wrap-add-task">
         <form class="wrap-content" @submit.prevent="addTask">
           <div class="wrap-input">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5 12H19"
-                stroke="inherit"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M12 5L19 12L12 19"
-                stroke="inherit"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <ArrowIcon />
             <input v-model.trim="taskText" type="text" placeholder="Add a new task" />
           </div>
         </form>
@@ -139,6 +120,8 @@ h1 {
   align-items: center;
 
   svg {
+    width: 24px;
+    height: 24px;
     stroke: var(--accent-color);
   }
 
