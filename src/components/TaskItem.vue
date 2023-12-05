@@ -5,10 +5,8 @@ defineEmits(['removeTask'])
 
 <template>
   <li class="list-item">
-    <div class="wrap-content">
-      <input type="checkbox" />
-      <p class="content">{{ title }}</p>
-    </div>
+    <input type="checkbox" />
+    <p class="content">{{ title }}</p>
     <button @click="$emit('removeTask')" class="remove-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
         <path
@@ -34,7 +32,6 @@ defineEmits(['removeTask'])
 .list-item {
   display: flex;
   gap: 16px;
-  justify-content: space-between;
   align-items: baseline;
   margin-bottom: 8px;
   background-color: var(--gray200);
@@ -45,42 +42,37 @@ defineEmits(['removeTask'])
     margin-bottom: 0;
   }
 
-  .wrap-content {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
+  input[type='checkbox'] {
+    appearance: none;
+    font: inherit;
+    color: currentColor;
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
+    border: 0.15em solid var(--gray500);
+    border-radius: 0.15em;
+    cursor: pointer;
 
-    input[type='checkbox'] {
-      appearance: none;
-      font: inherit;
-      color: currentColor;
-      min-width: 16px;
-      width: 16px;
-      height: 16px;
-      border: 0.15em solid var(--gray500);
-      border-radius: 0.15em;
-      cursor: pointer;
+    display: grid;
+    place-content: center;
+  }
 
-      display: grid;
-      place-content: center;
-    }
+  input[type='checkbox']::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    transform: scale(0);
+    transition: 100ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--white);
+  }
 
-    input[type='checkbox']::before {
-      content: '';
-      width: 0.5em;
-      height: 0.5em;
-      transform: scale(0);
-      transition: 100ms transform ease-in-out;
-      box-shadow: inset 1em 1em var(--white);
-    }
+  input[type='checkbox']:checked::before {
+    transform: scale(1);
+  }
 
-    input[type='checkbox']:checked::before {
-      transform: scale(1);
-    }
-
-    p {
-      font-size: 16px;
-    }
+  .content {
+    flex: 1;
+    font-size: 16px;
   }
 
   button {
