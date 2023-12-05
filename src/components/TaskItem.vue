@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CloseIcon from './icons/ic_close.svg'
 defineProps(['title'])
 defineEmits(['removeTask'])
 </script>
@@ -7,24 +8,7 @@ defineEmits(['removeTask'])
   <li class="list-item">
     <input type="checkbox" />
     <p class="content">{{ title }}</p>
-    <button @click="$emit('removeTask')" class="remove-item">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M18 6L6 18"
-          stroke="inherit"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M6 6L18 18"
-          stroke="inherit"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
+    <CloseIcon @click="$emit('removeTask')" class="remove-item" />
   </li>
 </template>
 
@@ -32,7 +16,6 @@ defineEmits(['removeTask'])
 .list-item {
   display: flex;
   gap: 16px;
-  align-items: baseline;
   margin-bottom: 8px;
   background-color: var(--gray200);
   padding: 16px;
@@ -52,6 +35,7 @@ defineEmits(['removeTask'])
     border: 0.15em solid var(--gray500);
     border-radius: 0.15em;
     cursor: pointer;
+    margin-top: 2px;
 
     display: grid;
     place-content: center;
@@ -75,18 +59,15 @@ defineEmits(['removeTask'])
     font-size: 16px;
   }
 
-  button {
-    background-color: transparent;
+  svg {
+    stroke: var(--gray600);
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
     cursor: pointer;
 
-    svg {
-      stroke: var(--gray500);
-    }
-
     &:hover {
-      svg {
-        stroke: var(--white);
-      }
+      stroke: var(--white);
     }
   }
 }
