@@ -1,76 +1,99 @@
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import TaskItem from './components/TaskItem.vue'
-
-import ArrowIcon from './components/icons/ic_arrow.svg'
-
-defineProps(['title'])
-
-const STORAGE_KEY = 'todo-app-storage'
-onMounted(() => {
-  tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-})
-
-// Sets type to item
-type task = {
-  id: number
-  title: string
-}
-
-// Sets an empty array to receive task list
-const tasks = ref<task[]>([])
-// Sets an empty string to receive input value
-const taskText = ref('')
-
-// Add task to list
-const addTask = () => {
-  tasks.value.push({ id: tasks.value.length + 1, title: taskText.value })
-  taskText.value = ''
-  // Add task to local storage
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-}
-// Remove task from list
-const removeTask = (task) => {
-  tasks.value.splice(tasks.value.indexOf(task), 1)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-}
-</script>
-
 <template>
   <div class="main">
     <header>
       <h1 class="list-name">My tasks</h1>
     </header>
 
-    <!-- TASK LIST -->
     <section class="wrap-list">
       <ul class="list-data" v-if="tasks.length != 0">
-        <TaskItem
-          v-for="task in tasks"
-          :key="task.id"
-          :title="task.title"
-          @remove-task="removeTask(task)"
-        >
-        </TaskItem>
+        <li class="list-item" v-for="task in tasks" :key="task.id">
+          <input type="checkbox" />
+          <template v-if="!task.isEditing">
+            <p class="content">{{ task.title }}</p>
+            <CloseIcon @click="removeTask(task)" class="remove-item" />
+            <EditIcon @click="startEditingTask(task)" class="edit-item" />
+          </template>
+          <template v-else>
+            <input
+              v-model="task.title"
+              class="edit-input"
+              @keyup.enter="updateTask({ ...task, title: $event.target.value })"
+              @blur="cancelEditingTask(task)"
+            />
+            <CloseIcon @click="cancelEditingTask(task)" class="cancel-item" />
+          </template>
+        </li>
       </ul>
-      <!-- <div class="list-empty-state" v-if="!tasks.length">
-        <p>Nothing here yet</p>
-      </div> -->
-
-      <!-- ADD TASK INPUT -->
-      <section class="wrap-add-task">
-        <form class="wrap-content" @submit.prevent="addTask">
-          <div class="wrap-input">
-            <ArrowIcon />
-            <input v-model.trim="taskText" type="text" placeholder="Add a new task" />
-          </div>
-        </form>
-      </section>
-      <!-- END ADD TASK INPUT -->
     </section>
-    <!-- END TASK LIST -->
+
+    <section class="wrap-add-task">
+      <form class="wrap-content" @submit.prevent="addTask">
+        <div class="wrap-input">
+          <ArrowIcon />
+          <input v-model.trim="taskText" type="text" placeholder="Add a new task" />
+        </div>
+      </form>
+    </section>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+import CloseIcon from './components/icons/ic_close.svg'
+import EditIcon from './components/icons/ic_arrow.svg'
+
+const STORAGE_KEY = 'todo-app-storage'
+
+onMounted(() => {
+  tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+})
+
+// Define interface for task
+type task = {
+  id: number
+  title: string
+  isEditing: boolean
+}
+
+// Define reactive state variables
+const tasks = ref<task[]>([])
+const taskText = ref('')
+
+// Add task to list
+const addTask = () => {
+  tasks.value.push({
+    id: tasks.value.length + 1,
+    title: taskText.value,
+    isEditing: false
+  })
+  taskText.value = ''
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
+}
+
+// Remove task from list
+const removeTask = (task: task) => {
+  tasks.value = tasks.value.filter((item) => item !== task)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
+}
+
+// Start editing a task
+const startEditingTask = (task: task) => {
+  task.isEditing = true
+}
+
+// Cancel editing a task
+const cancelEditingTask = () => {
+  tasks.value.forEach((task) => {
+    task.isEditing = false
+  })
+}
+
+// Update a task
+const updateTask = (task: task) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
+}
+</script>
 
 <style lang="scss" scoped>
 h1 {
@@ -83,7 +106,7 @@ h1 {
 /* TASK LIST */
 .wrap-list {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   position: relative;
   padding: 8px;
   margin: 8px;
@@ -160,4 +183,63 @@ h1 {
   }
 }
 /* END ADD TASK INPUT */
+
+.list-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  background-color: var(--gray200);
+  padding: 16px;
+  border-radius: 6px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  input[type='checkbox'] {
+    appearance: none;
+    font: inherit;
+    color: currentColor;
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
+    border: 0.15em solid var(--gray500);
+    border-radius: 0.15em;
+    cursor: pointer;
+    margin-top: 2px;
+
+    display: grid;
+    place-content: center;
+  }
+
+  input[type='checkbox']::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    transform: scale(0);
+    transition: 100ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--white);
+  }
+
+  input[type='checkbox']:checked::before {
+    transform: scale(1);
+  }
+
+  .content {
+    flex: 1;
+    font-size: 16px;
+  }
+
+  svg {
+    stroke: var(--gray600);
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    cursor: pointer;
+
+    &:hover {
+      stroke: var(--white);
+    }
+  }
+}
 </style>
