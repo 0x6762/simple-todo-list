@@ -5,6 +5,7 @@
       <form @submit.prevent="addTask" class="wrap-add-task">
         <div class="wrap-content">
           <div class="wrap-input">
+            <ArrowIcon />
             <input v-model="newTask" type="text" placeholder="Enter a new task" />
           </div>
           <button type="submit" class="action-btn">Add Task</button>
@@ -12,8 +13,15 @@
       </form>
       <ul v-if="tasks.length > 0" class="list-data">
         <li v-for="(task, index) in tasks" :key="index" class="list-item">
-          <input v-model="task.title" type="text" />
-          <ArrowIcon @click="updateTask(task)" />
+          <input type="checkbox" class="checkbox" />
+          <input
+            v-model="task.title"
+            type="text"
+            class="content"
+            @keyup.enter="updateTask(task), $event.target.blur()"
+            @blur="updateTask(task)"
+          />
+          <!-- <ArrowIcon @click="updateTask(task)" /> -->
           <CloseIcon @click="deleteTask(index)" />
         </li>
       </ul>
@@ -208,6 +216,10 @@ h1 {
   .content {
     flex: 1;
     font-size: 16px;
+    background-color: transparent;
+    color: var(--white);
+    border: none;
+    outline: none;
   }
 
   svg {
