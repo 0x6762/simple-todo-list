@@ -1,245 +1,167 @@
 <template>
-  <div class="main">
-    <header>
-      <h1 class="list-name">My tasks</h1>
-    </header>
-
-    <section class="wrap-list">
-      <ul class="list-data" v-if="tasks.length != 0">
-        <li class="list-item" v-for="task in tasks" :key="task.id">
-          <input type="checkbox" />
-          <template v-if="!task.isEditing">
-            <p class="content">{{ task.title }}</p>
-            <CloseIcon @click="removeTask(task)" class="remove-item" />
-            <EditIcon @click="startEditingTask(task)" class="edit-item" />
-          </template>
-          <template v-else>
-            <input
-              v-model="task.title"
-              class="edit-input"
-              @keyup.enter="updateTask({ ...task, title: $event.target.value })"
-              @blur="cancelEditingTask(task)"
-            />
-            <CloseIcon @click="cancelEditingTask(task)" class="cancel-item" />
-          </template>
-        </li>
-      </ul>
-    </section>
-
-    <section class="wrap-add-task">
-      <form class="wrap-content" @submit.prevent="addTask">
-        <div class="wrap-input">
-          <ArrowIcon />
-          <input v-model.trim="taskText" type="text" placeholder="Add a new task" />
-        </div>
-      </form>
-    </section>
+  <div :class="{ 'dark-mode': isDarkMode }">
+    <h1>Task List</h1>
+    <form @submit.prevent="addTask">
+      <input v-model="newTask" type="text" placeholder="Enter a new task" />
+      <button type="submit">Add Task</button>
+    </form>
+    <ul>
+      <li v-for="(task, index) in tasks" :key="index">
+        <input v-model="task.title" type="text" />
+        <button @click="updateTask(task)">Update</button>
+        <button @click="deleteTask(index)">Delete</button>
+      </li>
+    </ul>
+    <button @click="toggleDarkMode">Toggle Dark Mode</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import CloseIcon from './components/icons/ic_close.svg'
-import EditIcon from './components/icons/ic_arrow.svg'
+interface Task {
+  title: string
+}
 
-const STORAGE_KEY = 'todo-app-storage'
+const tasks = ref<Task[]>([])
+const newTask = ref('')
+const isDarkMode = ref(false)
+
+function addTask() {
+  if (newTask.value.trim() !== '') {
+    tasks.value.push({ title: newTask.value })
+    newTask.value = ''
+    saveTasksToLocalStorage()
+  }
+}
+
+function updateTask(task: Task) {
+  task.title = task.title.trim()
+  saveTasksToLocalStorage()
+}
+
+function deleteTask(index: number) {
+  tasks.value.splice(index, 1)
+  saveTasksToLocalStorage()
+}
+
+function saveTasksToLocalStorage() {
+  localStorage.setItem('tasks', JSON.stringify(tasks.value))
+}
+
+function loadTasksFromLocalStorage() {
+  const savedTasks = localStorage.getItem('tasks')
+  if (savedTasks) {
+    tasks.value = JSON.parse(savedTasks)
+  }
+}
+
+function toggleDarkMode() {
+  isDarkMode.value = !isDarkMode.value
+}
 
 onMounted(() => {
-  tasks.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  loadTasksFromLocalStorage()
 })
-
-// Define interface for task
-type task = {
-  id: number
-  title: string
-  isEditing: boolean
-}
-
-// Define reactive state variables
-const tasks = ref<task[]>([])
-const taskText = ref('')
-
-// Add task to list
-const addTask = () => {
-  tasks.value.push({
-    id: tasks.value.length + 1,
-    title: taskText.value,
-    isEditing: false
-  })
-  taskText.value = ''
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-}
-
-// Remove task from list
-const removeTask = (task: task) => {
-  tasks.value = tasks.value.filter((item) => item !== task)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-}
-
-// Start editing a task
-const startEditingTask = (task: task) => {
-  task.isEditing = true
-}
-
-// Cancel editing a task
-const cancelEditingTask = () => {
-  tasks.value.forEach((task) => {
-    task.isEditing = false
-  })
-}
-
-// Update a task
-const updateTask = (task: task) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks.value))
-}
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  margin: 24px 0 24px 24px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--white);
+// BEGIN: be15d9bcejpp
+/* Material Design Colors */
+$primary-color: #2196f3;
+$secondary-color: #f50057;
+$background-color: #f5f5f5;
+$dark-background-color: #333333;
+
+/* Material Design Typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+$font-family: 'Inter', sans-serif;
+
+$font-size: 16px;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+
+/* Material Design Button */
+$button-border-radius: 4px;
+$button-padding: 8px 16px;
+$button-primary-background-color: $primary-color;
+$button-primary-color: #ffffff;
+$button-secondary-background-color: $secondary-color;
+$button-secondary-color: #ffffff;
+
+/* Material Design Input */
+$input-border-radius: 4px;
+$input-border-color: #bdbdbd;
+$input-focus-border-color: $primary-color;
+$input-padding: 8px;
+$input-font-size: $font-size;
+
+/* Material Design List */
+$list-item-padding: 8px;
+$list-item-border-radius: 4px;
+$list-item-background-color: #ffffff;
+$list-item-dark-background-color: #222222;
+
+/* Material Design Card */
+$card-border-radius: 4px;
+$card-background-color: #ffffff;
+$card-dark-background-color: #222222;
+$card-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+/* Apply Material Design styles */
+body {
+  background-color: $background-color;
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight-regular;
 }
 
-/* TASK LIST */
-.wrap-list {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 8px;
-  margin: 8px;
-  background-color: var(--surface-color);
-  border-radius: 8px;
-
-  .list-data {
-    margin-top: 8px;
-  }
-
-  .list-empty-state {
-    height: 30%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gray500);
-  }
+.dark-mode {
+  background-color: $dark-background-color;
 }
-/* END TASK LIST */
 
-/* ADD TASK INPUT */
-.wrap-add-task {
-  .wrap-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8px;
-  }
+button {
+  border-radius: $button-border-radius;
+  padding: $button-padding;
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight-medium;
 }
-.wrap-input {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 
-  svg {
-    width: 24px;
-    height: 24px;
-    stroke: var(--accent-color);
-  }
-
-  input {
-    background-color: var(--surface-color);
-    padding: 12px 16px;
-    color: var(--white);
-    font-size: 18px;
-    font-weight: 400;
-    border: none;
-    border-radius: 8px;
-    outline: none;
-    &::placeholder {
-      color: var(--gray600);
-    }
-    &:focus {
-      &::placeholder {
-        color: transparent;
-      }
-    }
-  }
+input {
+  border-radius: $input-border-radius;
+  border: 1px solid $input-border-color;
+  padding: $input-padding;
+  font-size: $input-font-size;
 }
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: var(--gray100);
-  border: 1px solid var(--gray150);
-  border-radius: 80px;
-  cursor: pointer;
 
-  svg {
-    stroke: var(--accent-color);
-  }
+ul {
+  list-style-type: none;
+  padding: 0;
 }
-/* END ADD TASK INPUT */
 
-.list-item {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 8px;
-  background-color: var(--gray200);
-  padding: 16px;
-  border-radius: 6px;
+li {
+  padding: $list-item-padding;
+  border-radius: $list-item-border-radius;
+  background-color: $list-item-background-color;
+  box-shadow: $card-box-shadow;
+}
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+.card {
+  border-radius: $card-border-radius;
+  background-color: $card-background-color;
+  box-shadow: $card-box-shadow;
+}
 
-  input[type='checkbox'] {
-    appearance: none;
-    font: inherit;
-    color: currentColor;
-    min-width: 16px;
-    width: 16px;
-    height: 16px;
-    border: 0.15em solid var(--gray500);
-    border-radius: 0.15em;
-    cursor: pointer;
-    margin-top: 2px;
+.dark-mode button,
+.dark-mode input,
+.dark-mode li {
+  background-color: $list-item-dark-background-color;
+  color: #ffffff;
+}
 
-    display: grid;
-    place-content: center;
-  }
-
-  input[type='checkbox']::before {
-    content: '';
-    width: 0.5em;
-    height: 0.5em;
-    transform: scale(0);
-    transition: 100ms transform ease-in-out;
-    box-shadow: inset 1em 1em var(--white);
-  }
-
-  input[type='checkbox']:checked::before {
-    transform: scale(1);
-  }
-
-  .content {
-    flex: 1;
-    font-size: 16px;
-  }
-
-  svg {
-    stroke: var(--gray600);
-    width: 16px;
-    height: 16px;
-    margin-top: 2px;
-    cursor: pointer;
-
-    &:hover {
-      stroke: var(--white);
-    }
-  }
+.dark-mode .card {
+  background-color: $card-dark-background-color;
 }
 </style>
