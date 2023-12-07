@@ -1,20 +1,20 @@
 <template>
   <div :class="{ 'dark-mode': isDarkMode }">
     <h1>Task List</h1>
-    <form @submit.prevent="addTask" class="wrap-add-task">
-      <div class="wrap-content">
-        <div class="wrap-input">
-          <input v-model="newTask" type="text" placeholder="Enter a new task" />
-        </div>
-        <button type="submit" class="action-btn">Add Task</button>
-      </div>
-    </form>
     <div class="wrap-list">
+      <form @submit.prevent="addTask" class="wrap-add-task">
+        <div class="wrap-content">
+          <div class="wrap-input">
+            <input v-model="newTask" type="text" placeholder="Enter a new task" />
+          </div>
+          <button type="submit" class="action-btn">Add Task</button>
+        </div>
+      </form>
       <ul v-if="tasks.length > 0" class="list-data">
         <li v-for="(task, index) in tasks" :key="index" class="list-item">
           <input v-model="task.title" type="text" />
-          <button @click="updateTask(task)">Update</button>
-          <button @click="deleteTask(index)">Delete</button>
+          <ArrowIcon @click="updateTask(task)" />
+          <CloseIcon @click="deleteTask(index)" />
         </li>
       </ul>
       <div v-else class="list-empty-state">No tasks available</div>
@@ -25,6 +25,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ArrowIcon from './components/icons/ic_arrow.svg'
+import CloseIcon from './components/icons/ic_close.svg'
+// Add more imports for other icons as needed
 
 interface Task {
   title: string
