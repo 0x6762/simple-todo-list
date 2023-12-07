@@ -1,5 +1,6 @@
 <template>
-  <div :class="{ 'dark-mode': isDarkMode }">
+  <!-- <div :class="{ 'dark-mode': isDarkMode }"> -->
+  <div>
     <h1>Task List</h1>
     <div class="wrap-list">
       <form @submit.prevent="addTask" class="wrap-add-task">
@@ -8,26 +9,45 @@
             <ArrowIcon />
             <input v-model="newTask" type="text" placeholder="Enter a new task" />
           </div>
-          <button type="submit" class="action-btn">Add Task</button>
         </div>
       </form>
-      <ul v-if="tasks.length > 0" class="list-data">
-        <li v-for="(task, index) in tasks" :key="index" class="list-item">
-          <input type="checkbox" class="checkbox" />
+      <ul v-if="activeTasks.length > 0 || completedTasks.length > 0" class="list-data">
+        <li v-for="(task, index) in activeTasks" :key="task.id" class="list-item">
           <input
+            type="checkbox"
+            class="checkbox"
+            :checked="task.completed"
+            @change="completeTask(task)"
+          />
+          <input
+            :class="{ content: true, completed: task.completed }"
             v-model="task.title"
             type="text"
-            class="content"
             @keyup.enter="updateTask(task), $event.target.blur()"
             @blur="updateTask(task)"
           />
-          <!-- <ArrowIcon @click="updateTask(task)" /> -->
+          <CloseIcon @click="deleteTask(index)" />
+        </li>
+        <p class="completed-task-title" v-if="completedTasks.length > 0">Completed tasks</p>
+        <li v-for="(task, index) in completedTasks" :key="task.id" class="list-item">
+          <input
+            type="checkbox"
+            class="checkbox"
+            :checked="task.completed"
+            @change="completeTask(task)"
+          />
+          <input
+            :class="{ content: true, completed: task.completed }"
+            v-model="task.title"
+            type="text"
+            @keyup.enter="updateTask(task), $event.target.blur()"
+            @blur="updateTask(task)"
+          />
           <CloseIcon @click="deleteTask(index)" />
         </li>
       </ul>
       <div v-else class="list-empty-state">No tasks available</div>
     </div>
-    <!-- <button @click="toggleDarkMode">Toggle Dark Mode</button> -->
   </div>
 </template>
 
@@ -35,22 +55,28 @@
 import { ref, onMounted } from 'vue'
 import ArrowIcon from './components/icons/ic_arrow.svg'
 import CloseIcon from './components/icons/ic_close.svg'
-// Add more imports for other icons as needed
 
 interface Task {
   title: string
+  completed: boolean
 }
 
-const tasks = ref<Task[]>([])
+const activeTasks = ref<Task[]>([])
+const completedTasks = ref<Task[]>([])
 const newTask = ref('')
-const isDarkMode = ref(false)
+
+// const isDarkMode = ref(false)
 
 function addTask() {
-  if (newTask.value.trim() !== '') {
-    tasks.value.push({ title: newTask.value })
-    newTask.value = ''
-    saveTasksToLocalStorage()
+  const task = {
+    id: Date.now(), // Use the current timestamp as a unique id
+    title: newTask.value,
+    completed: false
   }
+  activeTasks.value.push(task)
+  newTask.value = ''
+  orderTasksById()
+  saveTasksToLocalStorage()
 }
 
 function updateTask(task: Task) {
@@ -59,24 +85,47 @@ function updateTask(task: Task) {
 }
 
 function deleteTask(index: number) {
-  tasks.value.splice(index, 1)
+  activeTasks.value.splice(index, 1)
   saveTasksToLocalStorage()
 }
 
+function completeTask(task: Task) {
+  task.completed = !task.completed
+  if (task.completed) {
+    const index = activeTasks.value.indexOf(task)
+    activeTasks.value.splice(index, 1)
+    completedTasks.value.push(task)
+  } else {
+    const index = completedTasks.value.indexOf(task)
+    completedTasks.value.splice(index, 1)
+    activeTasks.value.unshift(task)
+  }
+  saveTasksToLocalStorage()
+}
+
+function orderTasksById() {
+  activeTasks.value.sort((a, b) => a.id - b.id)
+}
+
 function saveTasksToLocalStorage() {
-  localStorage.setItem('tasks', JSON.stringify(tasks.value))
+  localStorage.setItem('activeTasks', JSON.stringify(activeTasks.value))
+  localStorage.setItem('completedTasks', JSON.stringify(completedTasks.value))
 }
 
 function loadTasksFromLocalStorage() {
-  const savedTasks = localStorage.getItem('tasks')
-  if (savedTasks) {
-    tasks.value = JSON.parse(savedTasks)
+  const savedActiveTasks = localStorage.getItem('activeTasks')
+  const savedCompletedTasks = localStorage.getItem('completedTasks')
+  if (savedActiveTasks) {
+    activeTasks.value = JSON.parse(savedActiveTasks)
+  }
+  if (savedCompletedTasks) {
+    completedTasks.value = JSON.parse(savedCompletedTasks)
   }
 }
 
-function toggleDarkMode() {
-  isDarkMode.value = !isDarkMode.value
-}
+// function toggleDarkMode() {
+//   isDarkMode.value = !isDarkMode.value
+// }
 
 onMounted(() => {
   loadTasksFromLocalStorage()
@@ -86,12 +135,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 h1 {
   margin: 24px 0 24px 24px;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--white);
 }
 
-/* TASK LIST */
 .wrap-list {
   display: flex;
   flex-direction: column;
@@ -100,20 +145,7 @@ h1 {
   margin: 8px;
   background-color: var(--surface-color);
   border-radius: 8px;
-
-  .list-data {
-    margin-top: 8px;
-  }
-
-  .list-empty-state {
-    height: 30%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gray500);
-  }
 }
-/* END TASK LIST */
 
 /* ADD TASK INPUT */
 .wrap-add-task {
@@ -172,6 +204,25 @@ h1 {
 }
 /* END ADD TASK INPUT */
 
+.list-data {
+  margin-top: 8px;
+}
+
+.list-empty-state {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray500);
+}
+
+.completed-task-title {
+  font-size: 14px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  color: var(--gray900);
+}
+
 .list-item {
   display: flex;
   gap: 16px;
@@ -182,6 +233,10 @@ h1 {
 
   &:last-child {
     margin-bottom: 0;
+  }
+
+  .checkbox {
+    margin-right: 8px;
   }
 
   input[type='checkbox'] {
@@ -220,6 +275,11 @@ h1 {
     color: var(--white);
     border: none;
     outline: none;
+  }
+
+  .completed {
+    text-decoration: line-through;
+    color: var(--gray500);
   }
 
   svg {
