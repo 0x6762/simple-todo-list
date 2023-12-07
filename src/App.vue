@@ -12,22 +12,27 @@
         </div>
       </form>
       <ul v-if="activeTasks.length > 0 || completedTasks.length > 0" class="list-data">
-        <li v-for="(task, index) in activeTasks" :key="task.id" class="list-item">
-          <input
-            type="checkbox"
-            class="checkbox"
-            :checked="task.completed"
-            @change="completeTask(task)"
-          />
-          <input
-            :class="{ content: true, completed: task.completed }"
-            v-model="task.title"
-            type="text"
-            @keyup.enter="updateTask(task), $event.target.blur()"
-            @blur="updateTask(task)"
-          />
-          <CloseIcon @click="deleteTask(index)" />
-        </li>
+        <div class="list-effect">
+          <transition-group name="list">
+            <li v-for="(task, index) in activeTasks" :key="task.id" class="list-item">
+              <input
+                type="checkbox"
+                class="checkbox"
+                :checked="task.completed"
+                @change="completeTask(task)"
+              />
+              <input
+                :class="{ content: true, completed: task.completed }"
+                v-model="task.title"
+                type="text"
+                @keyup.enter="updateTask(task), $event.target.blur()"
+                @blur="updateTask(task)"
+              />
+              <CloseIcon @click="deleteTask(index)" />
+            </li>
+          </transition-group>
+        </div>
+        <!-- Completed tasks -->
         <p class="completed-task-title" v-if="completedTasks.length > 0">Completed tasks</p>
         <li v-for="(task, index) in completedTasks" :key="task.id" class="list-item">
           <input
@@ -36,15 +41,9 @@
             :checked="task.completed"
             @change="completeTask(task)"
           />
-          <input
-            :class="{ content: true, completed: task.completed }"
-            v-model="task.title"
-            type="text"
-            @keyup.enter="updateTask(task), $event.target.blur()"
-            @blur="updateTask(task)"
-          />
-          <CloseIcon @click="deleteTask(index)" />
+          <p :class="{ content: true, completed: task.completed }">{{ task.title }}</p>
         </li>
+        <!-- End Completed tasks -->
       </ul>
       <div v-else class="list-empty-state">No tasks available</div>
     </div>
@@ -99,6 +98,7 @@ function completeTask(task: Task) {
     const index = completedTasks.value.indexOf(task)
     completedTasks.value.splice(index, 1)
     activeTasks.value.unshift(task)
+    orderTasksById()
   }
   saveTasksToLocalStorage()
 }
@@ -221,6 +221,18 @@ h1 {
   margin-top: 24px;
   margin-bottom: 16px;
   color: var(--gray900);
+}
+
+.list-effect {
+  .list-enter-active,
+  .list-leave-active {
+    transition: all 0.3s ease;
+  }
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 .list-item {
