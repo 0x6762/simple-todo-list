@@ -45,7 +45,6 @@
         </li>
         <!-- End Completed tasks -->
       </ul>
-      <div v-else class="list-empty-state">No tasks available</div>
     </div>
   </div>
 </template>
