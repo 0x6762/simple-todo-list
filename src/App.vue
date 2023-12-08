@@ -133,6 +133,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 h1 {
+  font-size: 18px;
+  font-weight: 400;
   margin: 24px 0 24px 24px;
 }
 
